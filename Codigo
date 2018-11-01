@@ -1,0 +1,107 @@
+from random import randint
+import json
+conocimiento = {'hola': 'Bien o que hace','Buenos días': 'Buen día', '¿como estas?': 'bien, gracias', 'tienes hambre?':'si, demasiada', 'cuantos años tienes?': '2019',
+                 'como te llamas' : 'no se, dimelo tú', 'de donde eres?': 'de bogota'}
+despedidas = {'chao':'chaito', 'adios': 'hasta luego', 'hasta luego': 'nospi',}
+verbos = ['jugué', 'llames', 'seguimos', 'partiremos', 'tenés', 'podemos', 'comer', 'quédense', 'voy', 'buscar', 'tienen', 'consumiendo', 'tengo']
+class Bot:
+    '''
+    Clase bot representa un bot el cual tendra difernetes funciones como saludar, responder,
+    recordar preguntar y aprender.
+    '''
+    nombre_bot = ''
+
+    def __init__(self, nombre_bot, conocimiento, despedidas):
+        '''
+        (str, list of dic, list of dic, list of dic) -> Bot
+
+        Crea un nuevo Bot
+
+        :param nombre_bot: Nombre del bot
+        :param preguntas: Preguntas almacenadas del bot.
+        :param saludos: Saludos almacenados del bot.
+        :param despedidas: Despedidas alcenadas del bot
+        '''
+
+        self.nombre_bot = nombre_bot
+        self.conocimiento = conocimiento
+        self.despedidas = despedidas
+
+    def leer(self, archivo):
+        """
+        (str) -> dict
+        Lee un archivo con un diccioniario en formato json
+        :param archivo:
+        :return:
+        """
+        try:
+            archivo = open(archivo, 'r')
+            conocimiento = json.load(archivo)
+            archivo.close()
+            return conocimiento
+        except FileNotFoundError:
+            return {}
+
+    def aprender(self,archivo, diccionario):
+        """
+        (str, dict) -> bool
+        Guarda la información de un diccionario
+        :param archivo:
+        :param diccionario:
+        :return:
+        """
+        try:
+            archivo = open(archivo, 'w')
+            archivo.write(json.dumps(diccionario))
+            archivo.close()
+            return True
+        except:
+            return False
+
+    def saludar(self):
+        return self.saludos[randint(0, len(self.saludos))] + 'mi nombre es ' + self.nombre_bot
+
+    def despedirse(self, peticion):
+            return self.despedidas[randint(0, len(self.despedidas))]
+
+    def identificar (self, peticion):
+        partes = peticion.split()
+        for palabra in partes:
+            if palabra in verbos:
+                return 'La palabra' + palabra + 'es un verbo'
+            else:
+                return 'No hay verbos en la frase'
+
+    def saludar(self):
+        print('Hola papi, soy ' + self.nombre_bot)
+        conocimiento = Sebas.leer('conocimiento.txt')
+        despedidas = Sebas.leer('despedidas.txt')
+        while True:
+            peticion = input('haz tu petición o despidete para salir ').lower().strip()
+            if peticion in despedidas:
+                print(despedidas[peticion].capitalize())
+                Sebas.aprender('conocichaomiento.txt', conocimiento)
+                Sebas.aprender('despedidas.txt', despedidas)
+                print(self.identificar(peticion))
+                break
+            elif peticion in conocimiento:
+                print(conocimiento[peticion].capitalize())
+            else:
+                print(self.identificar(peticion))
+                respuesta = input('¿Eso es una despedida? S/N ').lower().strip()
+                if respuesta == 's':
+                    respuesta = input('¿Como debería despedirme? ').lower().strip()
+                    despedidas[peticion] = respuesta
+                    Sebas.aprender('conocimiento.txt', conocimiento)
+                    Sebas.aprender('despedidas.txt', despedidas)
+                    print('aprendi a despedirme ', respuesta)
+                    break
+                else:
+                    respuesta = input('No se, ¿como debería responder a eso? ').lower().strip()
+                    conocimiento[peticion] = respuesta
+
+    def __repr__(self):
+        pass
+
+Sebas = Bot('Sebas', conocimiento, despedidas )
+Sebas.saludar()
