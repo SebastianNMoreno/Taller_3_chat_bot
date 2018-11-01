@@ -7,7 +7,7 @@ verbos = ['jugué', 'llames', 'seguimos', 'partiremos', 'tenés', 'podemos', 'co
 class Bot:
     '''
     Clase bot representa un bot el cual tendra difernetes funciones como saludar, responder,
-    recordar preguntar y aprender.
+    recordar preguntar, aprender y verificar verbos dentro de una frase.
     '''
     nombre_bot = ''
 
@@ -31,7 +31,7 @@ class Bot:
         """
         (str) -> dict
         Lee un archivo con un diccioniario en formato json
-        :param archivo:
+        :param archivo: Archivo con formato json
         :return:
         """
         try:
@@ -46,9 +46,9 @@ class Bot:
         """
         (str, dict) -> bool
         Guarda la información de un diccionario
-        :param archivo:
-        :param diccionario:
-        :return:
+        :param archivo: ubicación donde se guarda lo aprendido
+        :param diccionario: Nombre del archivo donde se aleja la base de conocimiento
+        :return: Si aprende o no aprende
         """
         try:
             archivo = open(archivo, 'w')
@@ -58,13 +58,24 @@ class Bot:
         except:
             return False
 
-    def saludar(self):
-        return self.saludos[randint(0, len(self.saludos))] + 'mi nombre es ' + self.nombre_bot
-
     def despedirse(self, peticion):
-            return self.despedidas[randint(0, len(self.despedidas))]
+        '''
+        (str) -> str
+        Genera una despedida de una base
+
+        :param peticion: Fraser ingresada por el usuario
+        :return: Frase de despedida
+        '''
+        return despedidas[peticion].capitalize()
 
     def identificar (self, peticion):
+        '''
+        (str) -> str
+        Identifica si una palabra en una frase es Verbo
+
+        :param peticion: Frase del usuario
+        :return: Booleano
+        '''
         partes = peticion.split()
         for palabra in partes:
             if palabra in verbos:
@@ -73,13 +84,17 @@ class Bot:
                 return 'No hay verbos en la frase'
 
     def saludar(self):
+        '''
+        Función principal donde se realiza el saludo y el proceso de charla con el usuario
+        :return:
+        '''
         print('Hola papi, soy ' + self.nombre_bot)
         conocimiento = Sebas.leer('conocimiento.txt')
         despedidas = Sebas.leer('despedidas.txt')
         while True:
             peticion = input('haz tu petición o despidete para salir ').lower().strip()
             if peticion in despedidas:
-                print(despedidas[peticion].capitalize())
+                print(Sebas.despedirse(peticion))
                 Sebas.aprender('conocichaomiento.txt', conocimiento)
                 Sebas.aprender('despedidas.txt', despedidas)
                 print(self.identificar(peticion))
